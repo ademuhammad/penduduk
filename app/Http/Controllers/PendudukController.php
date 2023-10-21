@@ -8,6 +8,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
 
+use App\Exports\PendudukExport;
+use Maatwebsite\Excel\Facades\Excel;
+
+
 
 class PendudukController extends Controller
 {
@@ -27,13 +31,30 @@ class PendudukController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {                
-        $penduduks = Penduduk::with('provinsi')->latest()->paginate(10);
-        return view('penduduk.index', compact('penduduks'));
-        
+{
+    $query = Penduduk::with('provinsi')->latest();
 
-
+    if (request()->has('search')) {
+        $query->where('nama', 'like', '%' . request('search') . '%')
+              ->orWhere('nik', 'like', '%' . request('search') . '%');
     }
+
+    if (request()->has('provinsi')) {
+        $query->where('provinsi_id', request('provinsi'));
+    }
+
+    if (request()->has('kabupaten')) {
+        $query->where('kabupaten_id', request('kabupaten'));
+    }
+
+    $penduduks = $query->paginate(10)->withQueryString();
+    $kabupatens = Kabupaten::all();
+    $provinsis = Provinsi::all();
+
+    return view('penduduk.index', compact('penduduks', 'kabupatens','provinsis'));
+}
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -110,7 +131,9 @@ class PendudukController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $penduduk= Penduduk::findOrFail($id);
+        $penduduk->delete();
+        return redirect()->route('penduduks.index');
     }
 
     public function getKabupaten($id)
@@ -119,4 +142,8 @@ class PendudukController extends Controller
     return response()->json($kabupaten); 
     }
 
+     public function export()
+{
+    return Excel::download(new PendudukExport, 'users.xlsx');
+}
 }

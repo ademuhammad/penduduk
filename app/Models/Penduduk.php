@@ -18,6 +18,24 @@ class Penduduk extends Model
         'provinsi_id'
     ];
 
+
+
+    public function scopeFilter($query, array $filters)
+    {
+
+        $query->when($filters['search'] ?? false, function ($query, $search) {
+            return $query->where('nik', 'like', '%' . $search . '%')->orWhere('nama', 'like', '%' . $search . '%');
+        });
+
+        $query->when($filters['provinsi'] ?? false, function ($query, $provinsi) {
+            return $query->where('provinsi', 'like', '%' . $provinsi . '%');
+        });
+
+        $query->when($filters['kabupaten'] ?? false, function ($query, $kabupaten) {
+            return $query->where('kabupaten', 'like', '%' . $kabupaten . '%');
+        });
+    }
+
     /**
      * Get the user that owns the Penduduk
      *

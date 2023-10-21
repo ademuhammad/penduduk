@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PendudukController;
 
 
 /*
@@ -23,3 +24,9 @@ Route::resource('kabupatens', \App\Http\Controllers\KabupatenController::class);
 Route::resource('penduduks', \App\Http\Controllers\PendudukController::class);
 
 Route::post('/get-kabupaten', 'PendudukController@getKabupaten')->name('penduduks.getKabupaten');
+Route::get('/get-kabupaten/{id}', 'PendudukController@getKabupaten');
+
+
+Route::get('/penduduk', 'PendudukController@index');
+
+Route::get('export/penduduk', [App\Http\Controllers\PendudukController::class, 'export']);
