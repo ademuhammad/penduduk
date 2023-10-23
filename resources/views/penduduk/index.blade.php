@@ -9,90 +9,28 @@
                     <div class="card-header">
                         <h3 class="card-title">Penduduk</h3>
                     </div>
-                    <div class="container">
 
-                        <a class="btn btn-primary" href="{{ route('penduduks.create') }}" role="button">Tambah
-                            Penduduk</a>
-                        <a class="btn btn-primary" href="export/penduduk" role="button">Export</a>
-                        <form action="{{ route('penduduks.index') }}" class="d-inline float-right mx-2">
-                            <div class="form-group row">
-                                <label for="provinsi" class="col-form-label">Provinsi</label>
-                                <div class="col">
-                                    <select name="provinsi" id="provinsi" class="custom-select">
-                                        <option @if (request('provinsi')=='' ) selected @endif value="">-- All --
-                                        </option>
-                                        @foreach ($provinsis as $provinsi)
-                                        <option @if (request('provinsi')==$provinsi->id) selected @endif
-                                            value="{{ $provinsi->id }}">{{ $provinsi->nama }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <label for="kabupaten" class="col-form-label">Kabupaten</label>
-                                <div class="col">
-                                    <select name="kabupaten" id="kabupaten" class="custom-select">
-                                        <option @if (request('kabupaten')=='' ) selected @endif value="">-- All --
-                                        </option>
-                                        @foreach ($kabupatens as $kabupaten)
-                                        <option @if (request('kabupaten')==$kabupaten->id) selected @endif
-                                            value="{{ $kabupaten->id }}">{{ $kabupaten->nama }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-4">
-                                    <input type="search" name="search" value="{{ request('search') }}"
-                                        class="form-control" placeholder="Search...">
-                                </div>
-                                <div class="col">
-                                    <button type="submit" class="btn btn-md btn-primary">Cari</button>
-                                </div>
-                            </div>
-                        </form>
-
-                    </div>
                     <!-- /.card-header -->
                     <div class="card-body">
-                        <table id="example1" class="table table-bordered table-striped">
+
+
+                        <table id="tbl_list" class="table table-striped table-bordered" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
-                                    <th scope="col">Nama</th>
-                                    <th scope="col">Nim</th>
-                                    <th scope="col">Jenis Kelamin</th>
-                                    <th scope="col">Tanggal Lahir</th>
-                                    <th scope="col">Alamat</th>
-                                    <th scope="col">Nama Provinsi</th>
-                                    <th scope="col">Nama Kabupaten</th>
-                                    <th scope="col">Aksi</th>
+                                    <th>No</th>
+                                    <th>Nama</th>
+                                    <th>Nik</th>
+                                    <th>Jenis Kelamin</th>
+                                    <th>Tanggal Lahir</th>
+                                    <th>Alamat</th>
+                                    <th>Provinsi</th>
+
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($penduduks as $penduduk)
-                                <tr>
-                                    <td>{{ $penduduk->nama }}</td>
-                                    <td>{{ $penduduk->nim }}</td>
-                                    <td>{{ $penduduk->jeniskelamin }}</td>
-                                    <td>{{ $penduduk->tanggallahir }}</td>
-                                    <td>{{ $penduduk->alamat }}</td>
-                                    <td>{{ $penduduk->provinsi ? $penduduk->provinsi->nama : 'N/A' }}</td>
-                                    <td>{{ $penduduk->kabupaten ? $penduduk->kabupaten->nama : 'N/A' }}</td>
-                                    <td>
-                                        <form onsubmit="return confirm('Apakah Anda Yakin ?');"
-                                            action="{{ route('penduduks.destroy', $penduduk->id) }}" method="POST">
-                                            <a href="{{ route('penduduks.edit', $penduduk->id) }}"
-                                                class="btn btn-sm btn-primary">EDIT</a>
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger">HAPUS</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="8">Tidak ada data yang ditemukan.</td>
-                                </tr>
-                                @endforelse
-                            </tbody>
 
-                        </table>{{ $penduduks->links() }}
+                            </tbody>
+                        </table>
                     </div>
                     <!-- /.card-body -->
                 </div>
@@ -104,7 +42,7 @@
 
 
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script type="text/javascript">
 $(document).ready(function() {
@@ -130,5 +68,56 @@ $(document).ready(function() {
         }
     });
 });
-</script>
+</script> -->
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet">
 @endsection
+@push('scripts')
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#tbl_list').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: '{{ url('/') }}',
+
+        columns: [{
+                data: 'id',
+                name: 'id'
+            },
+            {
+                data: 'nama',
+                name: 'nama'
+            },
+            {
+                data: 'nik',
+                name: 'nik'
+            },
+            {
+                data: 'jeniskelamin',
+                name: 'jeniskelamin'
+            },
+            {
+                data: 'tanggallahir',
+                name: 'tanggallahir'
+            },
+            {
+                data: 'alamat',
+                name: 'alamat'
+            },
+
+                {
+        data: 'provinsis',
+        name: 'provinsis.nama'
+    },
+            {
+                data: 'kabupatens',
+                name: 'kabupaten.nama'
+            },
+
+        ]
+    });
+});
+</script>
+@endpush

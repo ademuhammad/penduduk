@@ -43,11 +43,11 @@ class Penduduk extends Model
      */
     public function kabupaten()
     {
-        return $this->belongsTo(Kabupaten::class);
+        return $this->belongsTo(Kabupaten::class, 'kabupaten_id');
     }
 
-    public function provinsi()
+    public function provinsis()
     {
-        return $this->belongsTo(Provinsi::class);
+        return $this->belongsTo(Provinsi::class, 'provinsi_id');
     }
 }

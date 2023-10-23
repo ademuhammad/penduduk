@@ -15,9 +15,11 @@ use App\Http\Controllers\PendudukController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
+Route::get('/', [PendudukController::class,'index'])->name('home');
 
 Route::resource('provinsis', \App\Http\Controllers\ProvinsiController::class);
 Route::resource('kabupatens', \App\Http\Controllers\KabupatenController::class);

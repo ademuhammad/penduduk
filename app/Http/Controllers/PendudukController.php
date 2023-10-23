@@ -7,6 +7,7 @@ use App\Models\Kabupaten;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
+use Yajra\DataTables\Facades\DataTables;
 
 use App\Exports\PendudukExport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -32,26 +33,38 @@ class PendudukController extends Controller
      */
     public function index()
 {
-    $query = Penduduk::with('provinsi')->latest();
+    // $query = Penduduk::with('provinsi')->latest();
 
-    if (request()->has('search')) {
-        $query->where('nama', 'like', '%' . request('search') . '%')
-              ->orWhere('nik', 'like', '%' . request('search') . '%');
-    }
+    // if (request()->has('search')) {
+    //     $query->where('nama', 'like', '%' . request('search') . '%')
+    //           ->orWhere('nik', 'like', '%' . request('search') . '%');
+    // }
 
-    if (request()->has('provinsi')) {
-        $query->where('provinsi_id', request('provinsi'));
-    }
+    // if (request()->has('provinsi')) {
+    //     $query->where('provinsi_id', request('provinsi'));
+    // }
 
-    if (request()->has('kabupaten')) {
-        $query->where('kabupaten_id', request('kabupaten'));
-    }
+    // if (request()->has('kabupaten')) {
+    //     $query->where('kabupaten_id', request('kabupaten'));
+    // }
 
-    $penduduks = $query->paginate(10)->withQueryString();
-    $kabupatens = Kabupaten::all();
-    $provinsis = Provinsi::all();
+    // $penduduks = $query->paginate(10)->withQueryString();
+    // $kabupatens = Kabupaten::all();
+    // $provinsis = Provinsi::all();
+    
+        // return $pendd = Penduduk::with('provinsis')->get();
+     if (request()->ajax()) {
+            $pendd = Penduduk::with('provinsis');
+            return DataTables::eloquent($pendd)
+            ->addColumn('provinsis',function ($pen) {
+                return $pen->provinsis->nama;
+            })
 
-    return view('penduduk.index', compact('penduduks', 'kabupatens','provinsis'));
+                ->toJson();
+        }
+
+    // return view('penduduk.index', compact('penduduks', 'kabupatens','provinsis'));
+    return view('penduduk.index');
 }
 
 
