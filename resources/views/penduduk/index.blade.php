@@ -12,7 +12,8 @@
 
                     <!-- /.card-header -->
                     <div class="card-body">
-
+<a class="btn btn-primary" href="{{ route('penduduks.create') }}" role="button">Tambah
+                            Penduduk</a>
 
                         <table id="tbl_list" class="table table-striped table-bordered" cellspacing="0" width="100%">
                             <thead>
