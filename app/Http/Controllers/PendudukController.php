@@ -33,24 +33,6 @@ class PendudukController extends Controller
      */
     public function index()
 {
-    // $query = Penduduk::with('provinsi')->latest();
-
-    // if (request()->has('search')) {
-    //     $query->where('nama', 'like', '%' . request('search') . '%')
-    //           ->orWhere('nik', 'like', '%' . request('search') . '%');
-    // }
-
-    // if (request()->has('provinsi')) {
-    //     $query->where('provinsi_id', request('provinsi'));
-    // }
-
-    // if (request()->has('kabupaten')) {
-    //     $query->where('kabupaten_id', request('kabupaten'));
-    // }
-
-    // $penduduks = $query->paginate(10)->withQueryString();
-    // $kabupatens = Kabupaten::all();
-    // $provinsis = Provinsi::all();
     
         // return $pendd = Penduduk::with('provinsis')->get();
      if (request()->ajax()) {
@@ -58,7 +40,9 @@ class PendudukController extends Controller
             return DataTables::eloquent($pendd)
             ->addColumn('provinsis',function ($pen) {
                 return $pen->provinsis->nama;
-            })
+            })->addColumn('kabupatens', function ($pen) {
+            return $pen->kabupatens->nama; // Assuming 'kabupaten' is the relationship name in your Penduduk model.
+        })
 
                 ->toJson();
         }

@@ -24,6 +24,7 @@
                                     <th>Tanggal Lahir</th>
                                     <th>Alamat</th>
                                     <th>Provinsi</th>
+                                    <th>Kabupaten</th>
 
                                 </tr>
                             </thead>
@@ -42,33 +43,7 @@
 
 
 
-<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<script type="text/javascript">
-$(document).ready(function() {
-    $('#provinsi').on('change', function() {
-        var provinsiId = $(this).val();
-        if (provinsiId) {
-            $.ajax({
-                type: 'GET',
-                url: '/get-kabupaten/' + provinsiId,
-                success: function(data) {
-                    $('#kabupaten').empty();
-                    $('#kabupaten').append(
-                        '<option value="">-- Pilih Kabupaten --</option>');
-                    $.each(data, function(key, value) {
-                        $('#kabupaten').append('<option value="' + key + '">' +
-                            value + '</option>');
-                    });
-                }
-            });
-        } else {
-            $('#kabupaten').empty();
-            $('#kabupaten').append('<option value="">-- Pilih Kabupaten --</option>');
-        }
-    });
-});
-</script> -->
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
 <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>

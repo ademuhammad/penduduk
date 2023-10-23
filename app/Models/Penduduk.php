@@ -41,7 +41,7 @@ class Penduduk extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function kabupaten()
+    public function kabupatens()
     {
         return $this->belongsTo(Kabupaten::class, 'kabupaten_id');
     }
