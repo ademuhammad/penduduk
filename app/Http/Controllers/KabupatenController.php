@@ -56,11 +56,13 @@ class KabupatenController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
-    {
-        $kabupatens = Kabupaten::findOrFail($id);
+{
+    $kabupatens = Kabupaten::findOrFail($id);
+    $provinsis = Provinsi::all(); 
 
-        return view('kabupaten.edit', compact('kabupatens'));
-    }
+    return view('kabupaten.edit', compact('kabupatens', 'provinsis'));
+}
+
 
     /**
      * Update the specified resource in storage.
@@ -76,8 +78,8 @@ class KabupatenController extends Controller
             'nama' => $request->nama,
             'provinsi_id' => $request->provinsi_id
         ]);
+return redirect()->route('kabupatens.index');
 
-         return redirect()->route('kabupaten.index');
     }
 
     /**

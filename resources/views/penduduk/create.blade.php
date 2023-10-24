@@ -53,14 +53,14 @@ $provinsi_id = 0;
                 </select>
             </div>
 
-            <div class="form-group mb-3">
-                <label for="kabupaten">Kabupaten:</label>
-                <select name="kabupaten_id" id="kabupaten" class="form-control">
-                    @foreach($districts as $district)
-                    <option value="{{ $district->id }}">{{ $district->nama }}</option>
-                    @endforeach
-                </select>
-            </div>
+          <div class="form-group mb-3">
+    <label for="kabupaten">Kabupaten:</label>
+    <select name="kabupaten_id" id="kabupaten" class="form-control">
+
+        <option value="">Pilih Kabupaten</option>
+    </select>
+</div>
+
 
             <button type="submit" class="btn btn-md btn-dark">SIMPAN</button>
             <button type="reset" class="btn btn-md btn-dark">RESET</button>
@@ -71,6 +71,7 @@ $provinsi_id = 0;
 
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
@@ -85,24 +86,27 @@ $(function() {
     });
 });
 </script>
+
 <script>
 $('#provinsi').change(function() {
     var provinsi_id = $(this).val();
     $.ajax({
-        url: "{{ route('penduduks.getKabupaten', '') }}/" + provinsi_id,
+        url: "{{ route('penduduks.getKabupaten', ['id' => '__provinsi_id']) }}".replace('__provinsi_id', provinsi_id),
         type: "GET",
         success: function(data) {
             var kabupatenDropdown = $('#kabupaten');
             kabupatenDropdown.empty(); // Hapus opsi yang ada
-            $.each(data, function(key, value) {
+            kabupatenDropdown.append($('<option value="">Pilih Kabupaten</option>')); // Tambahkan opsi default
+            $.each(data, function(id, name) {
                 kabupatenDropdown.append($('<option>', {
-                    value: key,
-                    text: value,
+                    value: id,
+                    text: name,
                 }));
             });
         },
     });
 });
+
 </script>
 
 @endsection

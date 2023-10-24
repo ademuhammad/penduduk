@@ -172,14 +172,14 @@ class PendudukController extends Controller
 
     public function getKabupaten($id)
     {
-    $kabupaten = Kabupaten::where('provinsi_id', $id)->pluck('nama', 'id');
-    return response()->json($kabupaten); 
+        try {
+            $kabupaten = Kabupaten::where('provinsi_id', $id)->pluck('nama', 'id');
+            return response()->json($kabupaten);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500); // Mengembalikan pesan error dalam respons JSON
+        }
     }
 
-    // public function excel(ExportDataTable $dataTable)
-    // {
-    //  return $dataTable->render('export');
-    // }
 
     public function export(ExportDataTable $dataTable)
 {

@@ -165,6 +165,77 @@ $(document).ready(function() {
         $('#tbl_list').DataTable().ajax.url('{{ route('penduduks.index') }}?provinsi_id=' + provinsiId).load();
     }
 });
+/ Update record
+       $('#tbl_list').on('click','.updateUser',function(){
+            var id = $(this).data('id');
+
+            $('#txt_empid').val(id);
+
+            // AJAX request
+            $.ajax({
+                url: "{{ route('getEmployeeData') }}",
+                type: 'post',
+                data: {_token: CSRF_TOKEN,id: id},
+                dataType: 'json',
+                success: function(response){
+
+                    if(response.success == 1){
+
+                         $('#emp_name').val(response.emp_name);
+                         $('#email').val(response.email);
+                         $('#gender').val(response.gender);
+                         $('#city').val(response.city);
+
+                         tbl_list.ajax.reload();
+                    }else{
+                         alert("Invalid ID.");
+                    }
+                }
+            });
+
+       });
+
+       // Save user 
+       $('#btn_save').click(function(){
+            var id = $('#txt_empid').val();
+
+            var emp_name = $('#emp_name').val().trim();
+            var email = $('#email').val().trim();
+            var gender = $('#gender').val().trim();
+            var city = $('#city').val().trim();
+
+            if(emp_name !='' && email != '' && city != ''){
+
+                 // AJAX request
+                 $.ajax({
+                     url: "{{ route('updateEmployee') }}",
+                     type: 'post',
+                     data: {_token: CSRF_TOKEN,id: id,emp_name: emp_name, email: email, gender: gender, city: city},
+                     dataType: 'json',
+                     success: function(response){
+                         if(response.success == 1){
+                              alert(response.msg);
+
+                              // Empty and reset the values
+                              $('#emp_name','#email','#city').val('');
+                              $('#gender').val('Male');
+                              $('#txt_empid').val(0);
+
+                              // Reload DataTable
+                              tbl_list.ajax.reload();
+
+                              // Close modal
+                              $('#updateModal').modal('toggle');
+                         }else{
+                              alert(response.msg);
+                         }
+                     }
+                 });
+
+            }else{
+                 alert('Please fill all fields.');
+            }
+       });
 });
 </script>
 
