@@ -170,6 +170,8 @@ return [
             App\Providers\RouteServiceProvider::class,
             Yajra\DataTables\DataTablesServiceProvider::class,
             Maatwebsite\Excel\ExcelServiceProvider::class,
+            Yajra\DataTables\ButtonsServiceProvider::class,
+            
         ])
         ->toArray(),
 

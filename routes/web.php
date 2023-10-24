@@ -19,7 +19,8 @@ use App\Http\Controllers\PendudukController;
 //     return view('welcome');
 // });
 
-Route::get('/', [PendudukController::class,'index'])->name('home');
+
+Route::post('/deletedata', [PendudukController::class, 'deletedata'])->name('deletedata');
 
 Route::resource('provinsis', \App\Http\Controllers\ProvinsiController::class);
 Route::resource('kabupatens', \App\Http\Controllers\KabupatenController::class);
@@ -30,5 +31,6 @@ Route::get('/get-kabupaten/{id}', 'PendudukController@getKabupaten');
 
 
 Route::get('/penduduk', 'PendudukController@index');
+Route::resource('/', 'PendudukController'); 
+Route::get('penduduks/export', 'PendudukController@export')->name('penduduks.export');
 
-Route::get('export/penduduk', [App\Http\Controllers\PendudukController::class, 'export']);

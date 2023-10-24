@@ -12,6 +12,9 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Exports\PendudukExport;
 use Maatwebsite\Excel\Facades\Excel;
 
+use App\DataTables\ExportDataTable;
+
+
 
 
 class PendudukController extends Controller
@@ -32,24 +35,34 @@ class PendudukController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-{
+    {
     
         // return $pendd = Penduduk::with('provinsis')->get();
      if (request()->ajax()) {
             $pendd = Penduduk::with('provinsis');
+
             return DataTables::eloquent($pendd)
             ->addColumn('provinsis',function ($pen) {
                 return $pen->provinsis->nama;
             })->addColumn('kabupatens', function ($pen) {
-            return $pen->kabupatens->nama; // Assuming 'kabupaten' is the relationship name in your Penduduk model.
-        })
+            return $pen->kabupatens->nama; 
+        }) ->addColumn('action', function($row){
 
+                 // Update Button
+                 $updateButton = "<button class='btn btn-sm btn-info updateUser' data-id='".$row->id."' data-bs-toggle='modal' data-bs-target='#updateModal' ><i class='fa-solid fa-pen-to-square'></i></button>";
+
+                 // Delete Button
+                 $deleteButton = "<button class='btn btn-sm btn-danger deleteUser' data-id='".$row->id."'><i class='fas fa-trash'></i></button>";
+
+                 return $updateButton." ".$deleteButton;
+
+            }) 
                 ->toJson();
         }
 
     // return view('penduduk.index', compact('penduduks', 'kabupatens','provinsis'));
     return view('penduduk.index');
-}
+    }
 
 
 
@@ -92,7 +105,7 @@ class PendudukController extends Controller
             'jeniskelamin' => $request->jeniskelamin,
             'tanggallahir' => $request->tanggallahir,
             'alamat' => $request->alamat,
-'provinsi_id' => $kabupaten->provinsi_id, // Mengambil provinsi_id dari kabupaten terkait
+            'provinsi_id' => $kabupaten->provinsi_id,
         'kabupaten_id' => $request->kabupaten_id,
         ]);
 
@@ -123,14 +136,34 @@ class PendudukController extends Controller
         //
     }
 
+    public function deletedata(Request $request){
+
+
+         $id = $request->post('id');
+
+         $datapen = Penduduk::find($id);
+
+         if($datapen->delete()){
+             $response['success'] = 1;
+             $response['msg'] = 'Delete successfully'; 
+         }else{
+             $response['success'] = 0;
+             $response['msg'] = 'Invalid ID.';
+         }
+
+         return response()->json($response); 
+     }
+
+
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        $penduduk= Penduduk::findOrFail($id);
-        $penduduk->delete();
-        return redirect()->route('penduduks.index');
+    $penduduk = Penduduk::findOrFail($id);
+    $penduduk->delete();
+    return redirect()->route('penduduks.index')->with('success', 'Penduduk deleted successfully');
+
     }
 
     public function getKabupaten($id)
@@ -139,8 +172,14 @@ class PendudukController extends Controller
     return response()->json($kabupaten); 
     }
 
-     public function export()
+    // public function excel(ExportDataTable $dataTable)
+    // {
+    //  return $dataTable->render('export');
+    // }
+
+    public function export(ExportDataTable $dataTable)
 {
-    return Excel::download(new PendudukExport, 'users.xlsx');
+    return $dataTable->download('penduduk.xlsx');
 }
+
 }

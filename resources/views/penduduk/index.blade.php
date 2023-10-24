@@ -12,9 +12,11 @@
 
                     <!-- /.card-header -->
                     <div class="card-body">
-<a class="btn btn-primary" href="{{ route('penduduks.create') }}" role="button">Tambah
+                        <a class="btn btn-primary" href="{{ route('penduduks.create') }}" role="button">Tambah
                             Penduduk</a>
+                            <div class="container">
 
+</div>
                         <table id="tbl_list" class="table table-striped table-bordered" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
@@ -26,7 +28,7 @@
                                     <th>Alamat</th>
                                     <th>Provinsi</th>
                                     <th>Kabupaten</th>
-
+                                    <th>aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -47,17 +49,41 @@
 
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
-<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-<link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet">
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+     <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+     <script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+     <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
+
 @endsection
 @push('scripts')
 <script type="text/javascript">
+var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
 $(document).ready(function() {
     $('#tbl_list').DataTable({
         processing: true,
         serverSide: true,
-        ajax: '{{ url('/') }}',
-
+        ajax: '{{ route('penduduks.index') }}',
+        dom: 'Blfrtip',
+              buttons: [
+                   {
+                       extend: 'pdf',
+                       exportOptions: {
+                           columns: [1,2,3,4,5] // Column index which needs to export
+                       }
+                   },
+                   {
+                       extend: 'csv',
+                       exportOptions: {
+                           columns: [0,5] // Column index which needs to export
+                       }
+                   },
+                   {
+                       extend: 'excel',
+                   }
+              ],
         columns: [{
                 data: 'id',
                 name: 'id'
@@ -83,17 +109,52 @@ $(document).ready(function() {
                 name: 'alamat'
             },
 
-                {
-        data: 'provinsis',
-        name: 'provinsis.nama'
-    },
+            {
+                data: 'provinsis',
+                name: 'provinsis.nama'
+            },
             {
                 data: 'kabupatens',
                 name: 'kabupaten.nama'
             },
+            {
+                data: 'action',
+                name: 'action',
+                orderable: false,
+                searchable: false
+            },
 
         ]
     });
+    $('#tbl_list').on('click', '.deleteUser', function() {
+        var id = $(this).data('id');
+        console.log(id);
+        var deleteConfirm = confirm("Are you sure?");
+        if (deleteConfirm == true) {
+            // AJAX request
+            $.ajax({
+                url: "{{ route('deletedata') }}",
+                type: 'post',
+                data: {
+                    _token: CSRF_TOKEN,
+                    id: id
+                },
+                success: function(response) {
+                    if (response.success == 1) {
+                        alert("Record deleted.");
+
+                        // Reload DataTable
+                        $('#tbl_list').DataTable().ajax.reload();
+                    } else {
+                        alert("Invalid ID.");
+                    }
+                }
+            });
+        }
+
+    });
+
 });
 </script>
+
 @endpush
