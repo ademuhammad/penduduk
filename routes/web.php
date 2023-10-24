@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PendudukController;
+
 
 
 /*
@@ -15,9 +15,9 @@ use App\Http\Controllers\PendudukController;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/', function () {
+    return view('welcome');
+});
 
 
 Route::post('/deletedata', [PendudukController::class, 'deletedata'])->name('deletedata');
@@ -31,6 +31,6 @@ Route::get('/get-kabupaten/{id}', 'PendudukController@getKabupaten');
 
 
 Route::get('/penduduk', 'PendudukController@index');
-Route::resource('/', 'PendudukController'); 
+
 Route::get('penduduks/export', 'PendudukController@export')->name('penduduks.export');
 

@@ -34,34 +34,38 @@ class PendudukController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
     
         // return $pendd = Penduduk::with('provinsis')->get();
-     if (request()->ajax()) {
-            $pendd = Penduduk::with('provinsis');
+     if ($request->ajax()) {
+        $pendd = Penduduk::with('provinsis');
 
+        if ($request->has('provinsi_id')) {
+            $provinsiId = $request->input('provinsi_id');
+            $pendd->where('provinsi_id', $provinsiId);
+        }
             return DataTables::eloquent($pendd)
+            ->addColumn('provinsis', function ($pen) {
+                return $pen->provinsis->nama;
+            })
             ->addColumn('provinsis',function ($pen) {
                 return $pen->provinsis->nama;
             })->addColumn('kabupatens', function ($pen) {
             return $pen->kabupatens->nama; 
         }) ->addColumn('action', function($row){
-
-                 // Update Button
                  $updateButton = "<button class='btn btn-sm btn-info updateUser' data-id='".$row->id."' data-bs-toggle='modal' data-bs-target='#updateModal' ><i class='fa-solid fa-pen-to-square'></i></button>";
-
-                 // Delete Button
                  $deleteButton = "<button class='btn btn-sm btn-danger deleteUser' data-id='".$row->id."'><i class='fas fa-trash'></i></button>";
-
                  return $updateButton." ".$deleteButton;
-
             }) 
                 ->toJson();
         }
 
     // return view('penduduk.index', compact('penduduks', 'kabupatens','provinsis'));
-    return view('penduduk.index');
+    return view('penduduk.index', [
+        'provinces' => $this->provinces,
+        'districts' => $this->districts,
+    ]);
     }
 
 

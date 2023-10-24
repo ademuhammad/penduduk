@@ -86,16 +86,16 @@ $(function() {
 });
 </script>
 <script>
-$('#kabupaten').change(function() {
+$('#provinsi').change(function() {
     var provinsi_id = $(this).val();
     $.ajax({
-        url: "{{ route('penduduks.getKabupaten', '') }}/" +
-            provinsi_id,
+        url: "{{ route('penduduks.getKabupaten', '') }}/" + provinsi_id,
         type: "GET",
         success: function(data) {
-            $('#kabupaten').empty();
+            var kabupatenDropdown = $('#kabupaten');
+            kabupatenDropdown.empty(); // Hapus opsi yang ada
             $.each(data, function(key, value) {
-                $('#kabupaten').append($('<option>', {
+                kabupatenDropdown.append($('<option>', {
                     value: key,
                     text: value,
                 }));

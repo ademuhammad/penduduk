@@ -14,9 +14,15 @@
                     <div class="card-body">
                         <a class="btn btn-primary" href="{{ route('penduduks.create') }}" role="button">Tambah
                             Penduduk</a>
-                            <div class="container">
+                        <div class="container">
 
-</div>
+                        </div>
+                       <select class="form-control" id="provinsiFilter">
+    <option value="">Tampilkan Semua</option>
+    @foreach($provinces as $province)
+    <option value="{{ $province->id }}">{{ $province->nama }}</option>
+    @endforeach
+</select>
                         <table id="tbl_list" class="table table-striped table-bordered" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
@@ -49,13 +55,13 @@
 
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
-     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-     <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-     <script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-     <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
 
 @endsection
 @push('scripts')
@@ -67,23 +73,17 @@ $(document).ready(function() {
         serverSide: true,
         ajax: '{{ route('penduduks.index') }}',
         dom: 'Blfrtip',
-              buttons: [
-                   {
-                       extend: 'pdf',
-                       exportOptions: {
-                           columns: [1,2,3,4,5] // Column index which needs to export
-                       }
-                   },
-                   {
-                       extend: 'csv',
-                       exportOptions: {
-                           columns: [0,5] // Column index which needs to export
-                       }
-                   },
-                   {
-                       extend: 'excel',
-                   }
-              ],
+        buttons: [{
+                extend: 'pdf',
+                exportOptions: {
+                    columns: [1, 2, 3, 4, 5] // Column index which needs to export
+                }
+            },
+           
+            {
+                extend: 'excel',
+            }
+        ],
         columns: [{
                 data: 'id',
                 name: 'id'
@@ -153,7 +153,18 @@ $(document).ready(function() {
         }
 
     });
+   $('#provinsiFilter').on('change', function() {
+    var provinsiId = $(this).val();
 
+    // Cek jika yang dipilih adalah "Tampilkan Semua"
+    if (provinsiId === '') {
+        // Reload DataTable tanpa filter
+        $('#tbl_list').DataTable().ajax.url('{{ route('penduduks.index') }}').load();
+    } else {
+        // Reload DataTable dengan filter Provinsi yang dipilih
+        $('#tbl_list').DataTable().ajax.url('{{ route('penduduks.index') }}?provinsi_id=' + provinsiId).load();
+    }
+});
 });
 </script>
 
