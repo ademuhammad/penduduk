@@ -53,13 +53,13 @@ $provinsi_id = 0;
                 </select>
             </div>
 
-          <div class="form-group mb-3">
-    <label for="kabupaten">Kabupaten:</label>
-    <select name="kabupaten_id" id="kabupaten" class="form-control">
+            <div class="form-group mb-3">
+                <label for="kabupaten">Kabupaten:</label>
+                <select name="kabupaten_id" id="kabupaten" class="form-control">
 
-        <option value="">Pilih Kabupaten</option>
-    </select>
-</div>
+                    <option value="">Pilih Kabupaten</option>
+                </select>
+            </div>
 
 
             <button type="submit" class="btn btn-md btn-dark">SIMPAN</button>
@@ -91,12 +91,13 @@ $(function() {
 $('#provinsi').change(function() {
     var provinsi_id = $(this).val();
     $.ajax({
-        url: "{{ route('penduduks.getKabupaten', ['id' => '__provinsi_id']) }}".replace('__provinsi_id', provinsi_id),
+        url: "{{ route('penduduks.getKabupaten', ['id' => '__provinsi_id']) }}".replace('__provinsi_id',
+            provinsi_id),
         type: "GET",
         success: function(data) {
             var kabupatenDropdown = $('#kabupaten');
-            kabupatenDropdown.empty(); // Hapus opsi yang ada
-            kabupatenDropdown.append($('<option value="">Pilih Kabupaten</option>')); // Tambahkan opsi default
+            kabupatenDropdown.empty();
+            kabupatenDropdown.append($('<option value="">Pilih Kabupaten</option>'));
             $.each(data, function(id, name) {
                 kabupatenDropdown.append($('<option>', {
                     value: id,
@@ -106,7 +107,6 @@ $('#provinsi').change(function() {
         },
     });
 });
-
 </script>
 
 @endsection

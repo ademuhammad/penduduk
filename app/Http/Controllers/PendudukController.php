@@ -5,11 +5,8 @@ use App\Models\Penduduk;
 use App\Models\Provinsi;
 use App\Models\Kabupaten;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
-
-use App\Exports\PendudukExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 use App\DataTables\ExportDataTable;
@@ -54,14 +51,14 @@ class PendudukController extends Controller
             })->addColumn('kabupatens', function ($pen) {
             return $pen->kabupatens->nama; 
         }) ->addColumn('action', function($row){
-                 $updateButton = "<button class='btn btn-sm btn-info updateUser' data-id='".$row->id."' data-bs-toggle='modal' data-bs-target='#updateModal' ><i class='fa-solid fa-pen-to-square'></i></button>";
-                 $deleteButton = "<button class='btn btn-sm btn-danger deleteUser' data-id='".$row->id."'><i class='fas fa-trash'></i></button>";
+                 $updateButton = "<a href='" . route('penduduks.edit', $row->id) . "' class='btn btn-sm btn-info'>Edit</a>";
+                 $deleteButton = "<button class='btn btn-sm btn-danger deleteUser' data-id='".$row->id."'><i class='fas fa-trash'></i> Hapus</button>";
                  return $updateButton." ".$deleteButton;
             }) 
                 ->toJson();
         }
 
-    // return view('penduduk.index', compact('penduduks', 'kabupatens','provinsis'));
+
     return view('penduduk.index', [
         'provinces' => $this->provinces,
         'districts' => $this->districts,
@@ -110,7 +107,7 @@ class PendudukController extends Controller
             'tanggallahir' => $request->tanggallahir,
             'alamat' => $request->alamat,
             'provinsi_id' => $kabupaten->provinsi_id,
-        'kabupaten_id' => $request->kabupaten_id,
+            'kabupaten_id' => $request->kabupaten_id,
         ]);
 
         return redirect()->route('penduduks.index');
@@ -127,17 +124,42 @@ class PendudukController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    {
-        //
-    }
+public function edit(string $id)
+{
+    $penduduks = Penduduk::findOrFail($id);
+    $provinces = Provinsi::all();
+    $districts = Kabupaten::all(); // Define $districts here
+
+    return view('penduduk.edit', compact('penduduks', 'districts', 'provinces'));
+}
+
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
-        //
+        
+        $this->validate($request, [
+            'nama'=>'required',
+            'nik'=>'required',
+            'jeniskelamin'=>'required',
+            'tanggallahir'=>'required',
+            'alamat'=>'required',
+            
+        ]);
+
+        $penduduks = Penduduk::findOrFail($id);
+        $penduduks->update([
+            'nama'=> $request->nama,
+            'nik'=>$request->nik,
+            'jeniskelamin'=>$request->jeniskelamin,
+            'tanggallahir'=>$request->tanggallahir,
+            'alamat'=>$request->alamat,
+            'provinsi_id' => $request->provinsi_id,
+            'kabupaten_id' => $request->kabupaten_id
+        ]);
+        return redirect()->route('penduduks.index');
     }
 
     public function deletedata(Request $request){
@@ -181,9 +203,11 @@ class PendudukController extends Controller
     }
 
 
-    public function export(ExportDataTable $dataTable)
+   public function download() 
 {
-    return $dataTable->download('penduduk.xlsx');
+    return Excel::download(new ExportDataTable, 'penduduk.xlsx');
 }
+
+
 
 }

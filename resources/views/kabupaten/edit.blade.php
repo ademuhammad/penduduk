@@ -9,17 +9,18 @@
             @method('PUT')
 
             <div class="form-group mt-3">
-    <label class="font-weight-bold">Provinsi</label>
-    <select name="provinsi_id">
-        @foreach ($provinsis as $provinsi)
-            <option value="{{ $provinsi->id }}" {{ $kabupatens->provinsi_id == $provinsi->id ? 'selected' : '' }}>
-                {{ $provinsi->nama }}
-            </option>
-        @endforeach
-    </select>
-</div>
+                <label class="font-weight-bold">Provinsi</label>
+                <select name="provinsi_id">
+                    @foreach ($provinsis as $provinsi)
+                    <option value="{{ $provinsi->id }}"
+                        {{ $kabupatens->provinsi_id == $provinsi->id ? 'selected' : '' }}>
+                        {{ $provinsi->nama }}
+                    </option>
+                    @endforeach
+                </select>
+            </div>
 
-            
+
             <div class="form-group mt-3">
                 <label class="font-weight-bold">Nama</label>
                 <input type="text" name="nama" value="{{ old('nama', $kabupatens->nama) }}" placeholder="Masukkan Nama">
